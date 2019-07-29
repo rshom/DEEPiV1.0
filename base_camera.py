@@ -59,7 +59,12 @@ class BaseCamera(object):
 
     def __init__(self):
         """Start the background camera thread if it isn't running yet."""
+        self.stream()
+        
+    def stream(self):
+        print("Starting stream")
         if BaseCamera.thread is None:
+            print("New thread")
             BaseCamera.last_access = time.time()
 
             # start background frame thread
@@ -68,16 +73,17 @@ class BaseCamera(object):
 
             # wait until frames are available
             while self.get_frame() is None:
+                print("waiting")
                 time.sleep(0)
+        
+
 
     def get_frame(self):
         """Return the current camera frame."""
         BaseCamera.last_access = time.time()
-
         # wait for a signal from the camera thread
         BaseCamera.event.wait()
         BaseCamera.event.clear()
-
         return BaseCamera.frame
 
     @staticmethod
@@ -102,3 +108,5 @@ class BaseCamera(object):
                 print('Stopping camera thread due to inactivity.')
                 break
         BaseCamera.thread = None
+        
+
